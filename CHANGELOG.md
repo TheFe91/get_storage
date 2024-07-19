@@ -1,3 +1,6 @@
+## [2.1.2]
+- Bump deps
+
 ## [2.1.0] 
 - Add support to Getx5
 

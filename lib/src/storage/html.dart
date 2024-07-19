@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+
 import '../value.dart';
 
 class StorageImpl {
@@ -11,15 +12,14 @@ class StorageImpl {
   final String? path;
   final String fileName;
 
-  ValueStorage<Map<String, dynamic>> subject =
-      ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
+  ValueStorage<Map<String, dynamic>> subject = ValueStorage<Map<String, dynamic>>(<String, dynamic>{});
 
   void clear() {
     localStorage.remove(fileName);
-    subject.value.clear();
+    subject.value?.clear();
 
     subject
-      ..value.clear()
+      ..value?.clear()
       ..changeValue("", null);
   }
 
@@ -28,19 +28,19 @@ class StorageImpl {
   }
 
   Future<void> flush() {
-    return _writeToStorage(subject.value);
+    return _writeToStorage(subject.value!);
   }
 
   T? read<T>(String key) {
-    return subject.value[key] as T?;
+    return subject.value?[key] as T?;
   }
 
   T getKeys<T>() {
-    return subject.value.keys as T;
+    return subject.value?.keys as T;
   }
 
   T getValues<T>() {
-    return subject.value.values as T;
+    return subject.value?.values as T;
   }
 
   Future<void> init([Map<String, dynamic>? initialData]) async {
@@ -48,21 +48,21 @@ class StorageImpl {
     if (await _exists()) {
       await _readFromStorage();
     } else {
-      await _writeToStorage(subject.value);
+      await _writeToStorage(subject.value!);
     }
     return;
   }
 
   void remove(String key) {
     subject
-      ..value.remove(key)
+      ..value?.remove(key)
       ..changeValue(key, null);
     //  return _writeToStorage(subject.value);
   }
 
   void write(String key, dynamic value) {
     subject
-      ..value[key] = value
+      ..value?[key] = value
       ..changeValue(key, value);
     //return _writeToStorage(subject.value);
   }
@@ -72,8 +72,7 @@ class StorageImpl {
   // }
 
   Future<void> _writeToStorage(Map<String, dynamic> data) async {
-    localStorage.update(fileName, (val) => json.encode(subject.value),
-        ifAbsent: () => json.encode(subject.value));
+    localStorage.update(fileName, (val) => json.encode(subject.value), ifAbsent: () => json.encode(subject.value));
   }
 
   Future<void> _readFromStorage() async {
